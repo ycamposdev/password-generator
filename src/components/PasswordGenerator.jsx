@@ -214,7 +214,6 @@ export default function PasswordGenerator() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-900">
-      {/* Usamos w-full para móvil pero mantenemos tu max-w-md y w-95 para desktop */}
       <div className="w-full max-w-md md:w-95">
         <h1 className="text-red-400 text-2xl font-bold mb-4 text-center">
           Password Generator
@@ -222,14 +221,14 @@ export default function PasswordGenerator() {
 
         <div className="bg-gray-800 flex flex-col rounded-xl p-5 shadow-lg">
           <div className="p-4 flex justify-center items-center bg-gray-700 rounded-lg mb-4">
-            {/* break-all evita que el contenedor se deforme en móviles */}
             <span className="flex-grow text-center font-mono text-white break-all">
-              {password &&
+              {(password &&
                 password.split("").map((caracter, index) => (
                   <span key={index} className={colorCaracter(caracter)}>
                     {caracter}
                   </span>
-                ))}
+                ))) ||
+                "Seleccione una opción"}
             </span>
             <div
               onClick={copiarPassowrd}
@@ -247,10 +246,6 @@ export default function PasswordGenerator() {
             </div>
           </div>
 
-          {/* MODIFICACIÓN CLAVE: 
-          Cambiamos flex-row por flex-col en móvil y md:flex-row para Desktop.
-          Así no se amontona todo a la izquierda en celulares.
-        */}
           <div className="text-white flex flex-col md:flex-row gap-6 md:gap-9">
             <div className="space-y-2 text-white">
               <div className="flex items-center gap-2">
@@ -258,6 +253,7 @@ export default function PasswordGenerator() {
                   type="checkbox"
                   className="h-4 w-4 accent-blue-600"
                   onChange={handleLetras}
+                  //defaultChecked={true}
                 />
                 <span className="text-lg font-medium">Letras</span>
               </div>
