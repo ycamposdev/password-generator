@@ -67,69 +67,12 @@ export default function PasswordGenerator() {
           const indiceAzar = Math.trunc(
             Math.random() * caracteresPosibles.length,
           );
-          // console.log("caracteres Posibles: ", caracteresPosibles);
-          // console.log("indice Azar: ", indiceAzar);
-          c.push(caracteresPosibles[indiceAzar]);
 
-          // setPassword(c.join(""));
-          // console.log(password);
+          c.push(caracteresPosibles[indiceAzar]);
         }
       }
     }
-    //Funcion para desordenar elementos
-    // c = c.sort(() => Math.random() - 0.5);
-    let cant = c.length - cantidadLongitud;
-
-    // console.log("veces girando: ", a);
-    console.log("contenido: ", c);
-    // if (!c.includes(caracteresEspeciales)) {
-    //   // console.log("longitud anterior: ", c.length);
-    //   // console.log("longitud: ", c.length - 1);
-    //   // console.log("elemento eliminado: ", c.pop(c.length - 1));
-
-    //   c.pop(c.length - 1);
-    //   c.push(
-    //     caracteresEspeciales[
-    //       Math.trunc(Math.random() * caracteresEspeciales.length - 1)
-    //     ],
-    //   );
-
-    //   c[c.length - 2] =
-    //     caracteresEspeciales[
-    //       Math.trunc(Math.random() * caracteresEspeciales.length - 1)
-    //     ];
-
-    //   // c.push(
-    //   //   caracteresEspeciales[
-    //   //     Math.trunc(Math.random() * caracteresEspeciales.length - 1)
-    //   //   ],
-    //   // )(
-    //   //   c.push(caracteresEspeciales[Math.trunc(Math.random() * 10)]),
-    //   //   (c[c.length - 2] =
-    //   //     caracteresEspeciales[Math.trunc(Math.random() * 19)]),
-    //   // );
-    // }
-    // Desordena la posicion de los elementos del Array
-    c = c.sort(() => Math.random() - 0.5);
-    // if (!c.includes(mayusculas)) {
-    //   c.pop(c.length - 1);
-    //   c.push(
-    //     caracteresEspeciales[
-    //       Math.trunc(Math.random() * mayusculas.length - 1)
-    //     ],
-    //   );
-    //   c[c.length - 2] =
-    //     mayusculas[Math.trunc(Math.random() * mayusculas.length - 1)];
-    // }
-    // bk de longitud exacta
-    // if (c.length > cantidadLongitud) {
-    //   // c = c.slice(0, cantidadLongitud);
-    //   if (c.length > cantidadLongitud) {
-    //     c = c.splice(0, cantidadLongitud);
-    //   }
-    // }
-
-    // c = c.slice(0, cantidadLongitud);
+    c.sort(() => Math.trunc(Math.random() - 0.5));
 
     if (c.length > cantidadLongitud) {
       c = c.splice(0, cantidadLongitud);
@@ -144,32 +87,124 @@ export default function PasswordGenerator() {
     const contieneNumeros = c.some((caracter) =>
       "0123456789".includes(caracter),
     );
+    const contieneLetras = c.some((caracter) => abecedario.includes(caracter));
 
-    if (!contieneCEspecial && estadoCaracEsp) {
-      c.pop();
-      c.push(
-        caracteresEspeciales[
-          Math.trunc(Math.random() * caracteresEspeciales.length)
-        ],
-      );
+    let cantidadLetras = 0;
+    let cantidadMayus = 0;
+    let cantidadNumeros = 0;
+    let cantidadEspeciales = 0;
+
+    // Corregimos a: cant++
+    for (let cant = 0; cant < c.length; cant++) {
+      // Usamos .includes() sobre el abecedario completo, pasándole el caracter de la contraseña
+      if (abecedario.includes(c[cant])) {
+        cantidadLetras++;
+      } else if (mayusculas.includes(c[cant])) {
+        cantidadMayus++;
+      } else if ("0123456789".includes(c[cant])) {
+        cantidadNumeros++;
+      } else if (caracteresEspeciales.includes(c[cant])) {
+        cantidadEspeciales++;
+      }
     }
-    if (!contieneMayusculas && estadoMayusculas) {
-      c.pop();
-      c.push(mayusculas[Math.trunc(Math.random() * mayusculas.length)]);
+
+    const cantidadMayor = Math.max(
+      cantidadLetras,
+      cantidadMayus,
+      cantidadNumeros,
+      cantidadEspeciales,
+    );
+
+    if (cantidadMayor === cantidadLetras) {
+      let ultimoElemento = c.findLastIndex((char) => abecedario.includes(char));
+
+      if (estadoMayusculas && !contieneMayusculas) {
+        c[ultimoElemento] =
+          mayusculas[Math.trunc(Math.random() * mayusculas.length)];
+      }
+      if (estadoCaracEsp && !contieneCEspecial) {
+        c[c.findLastIndex((char) => abecedario.includes(char))] =
+          caracteresEspeciales[
+            Math.trunc(Math.random() * caracteresEspeciales.length)
+          ];
+      }
+      if (estadoNumeros && !contieneNumeros) {
+        c[c.findLastIndex((char) => abecedario.includes(char))] = Math.trunc(
+          Math.random() * 10,
+        );
+      }
+      c.sort(() => Math.trunc(Math.random() - 0.5));
+    }
+    if (cantidadMayor == cantidadNumeros) {
+      console.log("dentor de if de numero");
+      if (estadoLetras && !contieneLetras) {
+        c[c.findLastIndex((char) => "0123456789".includes(char))] =
+          abecedario[Math.trunc(Math.random() * abecedario.length)];
+        console.log("numeros - estado de letras");
+      }
+      if (estadoMayusculas && !contieneMayusculas) {
+        c[c.findLastIndex((char) => "0123456789".includes(char))] =
+          mayusculas[Math.trunc(Math.random() * mayusculas.length)];
+        console.log("numeros - estado de mayusculas");
+      }
+      if (estadoCaracEsp && !contieneCEspecial) {
+        c[c.findLastIndex((char) => "0123456789".includes(char))] =
+          caracteresEspeciales[
+            Math.trunc(Math.random() * caracteresEspeciales.length)
+          ];
+        console.log("numeros - estado de caracteres");
+      }
+    }
+    if (cantidadMayor == cantidadMayus) {
+      if (estadoLetras && !contieneLetras) {
+        c[c.findLastIndex((char) => mayusculas.includes(char))] =
+          abecedario[Math.trunc(Math.random() * abecedario.length)];
+        console.log("numeros - estado de letras");
+      }
+      if (estadoNumeros && !contieneNumeros) {
+        c[c.findLastIndex((char) => mayusculas.includes(char))] = Math.trunc(
+          Math.random() * 10,
+        );
+      }
+      if (estadoCaracEsp && !contieneCEspecial) {
+        c[c.findLastIndex((char) => mayusculas.includes(char))] =
+          caracteresEspeciales[
+            Math.trunc(Math.random() * caracteresEspeciales.length)
+          ];
+      }
+    }
+    if (cantidadMayor == cantidadEspeciales) {
+      if (estadoLetras && !contieneLetras) {
+        c[c.findLastIndex((char) => "0123456789".includes(char))] =
+          abecedario[Math.trunc(Math.random() * abecedario.length)];
+        console.log("numeros - estado de letras");
+      }
+      if (estadoNumeros && !contieneNumeros) {
+        c[c.findLastIndex((char) => abecedario.includes(char))] = Math.trunc(
+          Math.random() * 10,
+        );
+      }
+      if (estadoMayusculas && !contieneMayusculas) {
+        c[c.findLastIndex((char) => "0123456789".includes(char))] =
+          mayusculas[Math.trunc(Math.random() * mayusculas.length)];
+        console.log("numeros - estado de mayusculas");
+      }
     }
 
-    // c.pop(a);
-
+    //desordenar de nuevo
     c = c.sort(() => Math.random() - 0.5).join("");
-    console.log("tipo cantidadLongitud: ", typeof cantidadLongitud);
-    // console.log("resultado de cant: ", cant);
-    // console.log("contenido c: ", c);
-    console.log("resultado final: ", c);
-    setPassword(c);
 
-    // console.log("esto es contenido: ", contenido.pop(2));
-    // console.log("contenido despues de pop: ", contenido);
-    console.log(password);
+    setPassword(c);
+  };
+
+  const colorCaracter = (pass) => {
+    if ("0123456789".includes(pass)) return "text-orange-500";
+    if (mayusculas.includes(pass)) return "text-green-500";
+    if (caracteresEspeciales.includes(pass)) return "text-red-500";
+  };
+
+  const copiarPassowrd = () => {
+    navigator.clipboard.writeText(password);
   };
 
   return (
@@ -181,10 +216,19 @@ export default function PasswordGenerator() {
 
         <div className="bg-gray-800 flex flex-col rounded-xl p-5 shadow-lg">
           <div className="p-4 flex justify-center items-center bg-gray-700 rounded-lg mb-4">
-            <span className="flex-grow text-center font-mono text-white">
-              {password || "nada"}
+            <span className="flex-grow text-center font-mono text-white ">
+              {password
+                ? password.split("").map((caracter, index) => (
+                    <span key={index} className={colorCaracter(caracter)}>
+                      {caracter}
+                    </span>
+                  ))
+                : "nada"}
             </span>
-            <div className="p-2 bg-blue-100 cursor-pointer hover:bg-blue-200 rounded transition-colors">
+            <div
+              className="p-2 bg-blue-100 cursor-pointer hover:bg-blue-200 rounded transition-colors"
+              onClick={copiarPassowrd}
+            >
               <IconCopia />
             </div>
           </div>
