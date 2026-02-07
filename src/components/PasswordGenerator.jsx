@@ -1,4 +1,5 @@
 import { FaRegClipboard as IconCopia } from "react-icons/fa6";
+import { FaClipboardCheck as IconPasswordCopiado } from "react-icons/fa";
 import { use, useState, useSyncExternalStore } from "react";
 
 export default function PasswordGenerator() {
@@ -12,6 +13,7 @@ export default function PasswordGenerator() {
   const [estadoMayusculas, setEstadoMayusculas] = useState(false);
   const [estadoCaracEsp, setEstadoCaraEsp] = useState(false);
   const [cantidadLongitud, setCantidadLongitud] = useState(4);
+  const [copiado, setCopiado] = useState("");
 
   const handleLetras = (e) => {
     // esto es para obtener el value y setEstadoLetras es para enviar a value para 'estadoLetras'
@@ -205,75 +207,94 @@ export default function PasswordGenerator() {
 
   const copiarPassowrd = () => {
     navigator.clipboard.writeText(password);
+    setCopiado(true);
+
+    setTimeout(() => setCopiado(false), 2000);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen  p-4 bg-gray-900">
-      <div className="max-w-md w-95">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-900">
+      {/* Usamos w-full para móvil pero mantenemos tu max-w-md y w-95 para desktop */}
+      <div className="w-full max-w-md md:w-95">
         <h1 className="text-red-400 text-2xl font-bold mb-4 text-center">
           Password Generator
         </h1>
 
         <div className="bg-gray-800 flex flex-col rounded-xl p-5 shadow-lg">
           <div className="p-4 flex justify-center items-center bg-gray-700 rounded-lg mb-4">
-            <span className="flex-grow text-center font-mono text-white ">
-              {password
-                ? password.split("").map((caracter, index) => (
-                    <span key={index} className={colorCaracter(caracter)}>
-                      {caracter}
-                    </span>
-                  ))
-                : "nada"}
+            {/* break-all evita que el contenedor se deforme en móviles */}
+            <span className="flex-grow text-center font-mono text-white break-all">
+              {password &&
+                password.split("").map((caracter, index) => (
+                  <span key={index} className={colorCaracter(caracter)}>
+                    {caracter}
+                  </span>
+                ))}
             </span>
             <div
-              className="p-2 bg-blue-100 cursor-pointer hover:bg-blue-200 rounded transition-colors"
               onClick={copiarPassowrd}
+              className={`p-2 rounded transition-all duration-500 cursor-pointer flex-shrink-0 ${
+                copiado
+                  ? "bg-green-500 text-white scale-110"
+                  : "bg-blue-100 hover:bg-blue-200 text-blue-600"
+              }`}
             >
-              <IconCopia />
+              {copiado ? (
+                <IconPasswordCopiado className="animate-in fade-in zoom-in duration-300" />
+              ) : (
+                <IconCopia />
+              )}
             </div>
           </div>
 
-          <div className="space-y-2 text-white text- ">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="h-4 w-4 accent-blue-600"
-                onChange={handleLetras}
-              />
-              <span className="text-lg font-medium">Letras</span>
+          {/* MODIFICACIÓN CLAVE: 
+          Cambiamos flex-row por flex-col en móvil y md:flex-row para Desktop.
+          Así no se amontona todo a la izquierda en celulares.
+        */}
+          <div className="text-white flex flex-col md:flex-row gap-6 md:gap-9">
+            <div className="space-y-2 text-white">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 accent-blue-600"
+                  onChange={handleLetras}
+                />
+                <span className="text-lg font-medium">Letras</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 accent-blue-600"
+                  onChange={handleNumeros}
+                />
+                <span className="text-lg font-medium">Números</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 accent-blue-600"
+                  onChange={handleMayusculas}
+                />
+                <span className="text-lg font-medium">Mayúsculas</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 accent-blue-600"
+                  onChange={handleCaracterEspecial}
+                />
+                <span className="text-lg font-medium">C. Especiales</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="h-4 w-4 accent-blue-600"
-                onChange={handleNumeros}
-              />
-              <span className="text-lg font-medium">Números</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="h-4 w-4 accent-blue-600"
-                onChange={handleMayusculas}
-              />
-              <span className="text-lg font-medium">Mayúsculas</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="h-4 w-4 accent-blue-600"
-                onChange={handleCaracterEspecial}
-              />
-              <span className="text-lg font-medium">C. Especiales</span>
-            </div>
-            <div className="flex gap-5">
+
+            <div className="flex flex-row md:flex-row gap-2 md:gap-5 h-full items-center md:items-start">
               <span>Longitud:</span>
               <input
                 type="number"
                 min="4"
                 max="16"
                 defaultValue="4"
-                className="bg-white rounded-lg text-black text-center"
+                className="bg-white rounded-lg text-black text-center w-16"
                 onChange={handleCantidadLongitud}
               />
             </div>
